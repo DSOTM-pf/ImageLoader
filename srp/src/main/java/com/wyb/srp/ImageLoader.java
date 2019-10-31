@@ -2,6 +2,7 @@ package com.wyb.srp;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.util.LruCache;
 import android.widget.ImageView;
 
@@ -15,35 +16,21 @@ import java.util.concurrent.Executors;
  * */
 public class ImageLoader {
     //图片缓存
-    LruCache<String, Bitmap> mImageCache;
+    ImageCache mImageCache = new ImageCache();
     //线程池，线程数量为Cpu数量
     ExecutorService mExecutorService = Executors.newFixedThreadPool(
             Runtime.getRuntime().availableProcessors()
     );
 
-    //构造方法
-    public ImageLoader(){
-        initImageCache();
-    }
-    //初始化
-    private void initImageCache()
-    {
-        //计算可使用的最大内存
-        final int maxMemory = (int)(Runtime.getRuntime().maxMemory()/1024);
-        //取1/4的可用内存作为缓存
-        final int cacheSize = maxMemory/4;
-
-        mImageCache = new LruCache<String ,Bitmap>(cacheSize)
-        {
-            @Override
-            protected int sizeOf(String key, Bitmap value) {
-                return value.getRowBytes() * value.getHeight()/1024;
-            }
-        };
-    }
     //显示图片
     public void displayImage(final  String url,final ImageView imageView)
     {
+        Bitmap bitmap = mImageCache.get(url);
+        if(bitmap!=null)
+        {
+            imageView.setImageBitmap(bitmap);
+            return ;
+        }
         imageView.setTag(url);
         mExecutorService.submit(new Runnable() {
             @Override
