@@ -19,8 +19,12 @@ public class ImageLoader {
     ImageCache mImageCache = new ImageCache();
     //SD卡缓存
     DiskCache mDiskCache = new DiskCache();
+    //双缓存
+    DoubleCache mDoubleCache = new DoubleCache();
     //是否使用SD卡缓存
     boolean isUseDiskCache = false;
+    //使用双缓存
+    boolean isUseDoubleCache = false;
     //线程池，线程数量为Cpu数量
     ExecutorService mExecutorService = Executors.newFixedThreadPool(
             Runtime.getRuntime().availableProcessors()
@@ -30,7 +34,22 @@ public class ImageLoader {
     public void displayImage(final  String url,final ImageView imageView)
     {
 
-        Bitmap bitmap = isUseDiskCache?mDiskCache.get(url):mImageCache.get(url);
+        Bitmap bitmap = null;
+
+        /**多了很多判断*/
+        if(isUseDoubleCache)
+        {
+            bitmap = mDoubleCache.get(url);
+        }
+        else if(isUseDiskCache)
+        {
+            bitmap = mDiskCache.get(url);
+        }
+        else
+        {
+            bitmap = mImageCache.get(url);
+        }
+
         if(bitmap!=null)
         {
             imageView.setImageBitmap(bitmap);
@@ -77,5 +96,9 @@ public class ImageLoader {
     public void useDiskCache(boolean useDiskCache)
     {
         isUseDiskCache = useDiskCache;
+    }
+    public void useDoubleCache(boolean useDoubleCache)
+    {
+        isUseDoubleCache = useDoubleCache;
     }
 }
