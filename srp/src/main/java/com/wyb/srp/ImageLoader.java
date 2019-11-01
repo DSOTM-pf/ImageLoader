@@ -36,7 +36,7 @@ public class ImageLoader {
 
         Bitmap bitmap = null;
 
-        /**多了很多判断*/
+        /**多了很多判断 */
         if(isUseDoubleCache)
         {
             bitmap = mDoubleCache.get(url);
