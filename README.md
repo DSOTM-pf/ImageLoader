@@ -13,3 +13,7 @@ imageLoader.useDiskCache(true);
 //使用内存缓存
 imageLoader.userDiskCache(false);
 ```
+### v0.4
+- 目的是解决用户使用内存缓存时不能使用SD卡缓存，使用SD卡缓存时不能使用内存缓存的问题
+- 添加了DiskCache类以及修改了ImageLoader
+- 缺点：if-else太多，结构脆弱，可拓展性差
